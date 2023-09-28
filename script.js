@@ -28,7 +28,8 @@ let productos = [
 }
 ]
 
-let carrito = []
+let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+
 
 let listaProductos = document.getElementById("listaProductos")
 const modalBody = document.getElementById("modal-body");
