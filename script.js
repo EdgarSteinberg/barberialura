@@ -2,7 +2,7 @@ let productos = [
     {
     id : 1,
     nombre : "Cabello",
-    productoDescripcion : "Con tijera o maquina",
+    productoDescripcion : "Corte con tijera o maquina manualmente",
     precio : 10,
     imagen : "../img/cabello.jpg",
     cantidad : 0
@@ -31,7 +31,7 @@ let productos = [
 let carrito = []
 
 let listaProductos = document.getElementById("listaProductos")
-
+const modalBody = document.getElementById("modal-body");
 
 for (let i = 0; i < productos.length; i++) {
     let producto = productos[i];
@@ -74,20 +74,42 @@ function actualizarCantidad (event) {
     producto.cantidad = cantidad
 }
 
-function agregarAlCarrito (event) {
-    let button = event.target
-    let productoId = button.getAttribute("data-producto-id")
+function agregarAlCarrito(event) {
+    let button = event.target;
+    let productoId = button.getAttribute("data-producto-id");
     let producto = productos.find((producto) => producto.id == parseInt(productoId));
-
-    let productoEnCarrito = carrito.find((item) => item.id == producto.id)
-
-    if(productoEnCarrito){
-        productoEnCarrito.cantidad += 1
-    }else{
-        carrito.push({...productos, cantidad: 1 })
+  
+    let input = document.querySelector(`input[data-producto-id="${productoId}"]`);
+    let cantidad = parseInt(input.value);
+  
+    let productoEnCarrito = carrito.find((item) => item.id == producto.id);
+  
+    if (productoEnCarrito) {
+      productoEnCarrito.cantidad += cantidad;
+    } else {
+      carrito.push({ ...producto, cantidad: 1 });
     }
-
+  
+    localStorage.setItem("carrito", JSON.stringify(carrito));
     
-  console.log("Producto agregado al carrito. ID: " + productoId);
-  console.log("Carrito:", carrito);
-}
+    Swal.fire('Has agregado este producto al carrito')
+
+    // Actualiza el contenido del modal de confirmación
+    let modalConfirmacionBody = document.getElementById("modal-confirmacion-body");
+    modalConfirmacionBody.innerHTML = `
+    <div class="card" style="width: 18rem;">
+    <h1>${producto.nombre}</h1>
+    <img src="${producto.imagen}" class="card-img-top" alt="hamburguesas">
+    <div class="card-body">
+        <h5 class="card-title">${producto.productoDescripcion}</h5>
+        <p class="card-text">Precio por unidad: $${producto.precio.toFixed(2)}</p>
+        <p class="card-text">cantidad: ${producto.cantidad}</p>
+        <p class="card-text">Precio Total: $${producto.precio * producto.cantidad}</p>
+        </div>
+    `;
+  
+  
+  }
+  
+
+
